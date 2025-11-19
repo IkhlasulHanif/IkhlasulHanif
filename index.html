@@ -7,14 +7,13 @@
     <style>
         /* --- CSS VARIABLES & RESET --- */
         :root {
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
+            --bg-color: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.9);
             --text-main: #2d3436;
             --text-muted: #636e72;
-            --accent: #0984e3; /* MBZUAI Blue-ish style */
+            --accent: #0984e3;
             --accent-hover: #74b9ff;
             --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,116 +23,156 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             line-height: 1.6;
+            overflow-x: hidden;
+            perspective: 1000px; /* For 3D space */
         }
 
-        a { text-decoration: none; color: var(--accent); transition: var(--transition); }
-        a:hover { color: var(--accent-hover); }
+        /* --- BACKGROUND ANIMATION (The "Moving Around" Vibe) --- */
+        .background-shapes {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 20s infinite alternate;
+        }
+        .shape:nth-child(1) {
+            top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: #a29bfe;
+            animation-duration: 25s;
+        }
+        .shape:nth-child(2) {
+            bottom: -10%; right: -10%; width: 40vw; height: 40vw;
+            background: #74b9ff;
+            animation-duration: 30s;
+            animation-delay: -5s;
+        }
+        .shape:nth-child(3) {
+            top: 40%; left: 40%; width: 30vw; height: 30vw;
+            background: #81ecec;
+            animation-duration: 35s;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(50px, 50px) rotate(20deg); }
+        }
 
         /* --- LAYOUT --- */
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
 
-        header {
-            padding: 60px 0 40px;
-            text-align: center;
-        }
+        header { padding: 80px 0 50px; text-align: center; }
 
-        section {
-            margin-bottom: 60px;
-            opacity: 0; /* Hidden for animation */
-            transform: translateY(30px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-
-        section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        h1 { font-size: 2.5rem; margin-bottom: 10px; letter-spacing: -0.5px; }
+        h1 { font-size: 2.8rem; margin-bottom: 10px; letter-spacing: -1px; color: #2d3436; }
         h2 { 
             font-size: 1.5rem; 
-            margin-bottom: 20px; 
-            border-bottom: 2px solid #dfe6e9; 
+            margin-bottom: 25px; 
+            border-bottom: 2px solid rgba(0,0,0,0.1); 
             padding-bottom: 10px;
             display: inline-block;
         }
         
         .subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 20px; }
-        .contact-links a { margin: 0 10px; font-weight: 600; }
+        .contact-links a { margin: 0 10px; font-weight: 600; text-decoration: none; color: var(--accent); }
 
-        /* --- CARDS (General) --- */
+        /* --- 3D CARDS --- */
         .card {
             background: var(--card-bg);
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-left: 4px solid transparent;
-            transition: var(--transition);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+            /* 3D Transforms init */
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px rgba(0,0,0,0.08);
-            border-left-color: var(--accent);
+
+        /* This class is added via JS for the hover effect */
+        .card-hover {
+            z-index: 10;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        /* --- FILTER BUTTONS --- */
+        .filter-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-2px);
         }
 
         /* --- PUBLICATIONS SPECIFIC --- */
-        .paper-card h3 { font-size: 1.1rem; margin-bottom: 5px; }
-        .paper-authors { font-size: 0.95rem; color: var(--text-main); margin-bottom: 5px; }
+        .paper-card {
+            /* For filtering transition */
+            transition: all 0.5s ease, opacity 0.3s ease; 
+        }
+        .paper-card.hidden {
+            display: none;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        .paper-card h3 { font-size: 1.15rem; margin-bottom: 8px; }
+        .paper-authors { font-size: 0.95rem; color: var(--text-main); margin-bottom: 8px; }
         .paper-venue { font-size: 0.9rem; font-weight: bold; color: var(--accent); font-style: italic; }
-        .tag {
-            display: inline-block;
-            background: #dfe6e9;
-            padding: 2px 8px;
+        .category-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            padding: 3px 6px;
             border-radius: 4px;
-            font-size: 0.75rem;
-            margin-left: 10px;
-            color: #2d3436;
+            background: #dfe6e9;
+            color: #636e72;
+            margin-right: 8px;
+            letter-spacing: 0.5px;
         }
 
         /* --- TIMELINE (Education & Exp) --- */
-        .timeline-item {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 25px;
-        }
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 5px;
-        }
+        .timeline-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
         .role { font-weight: bold; font-size: 1.1rem; }
-        .date { color: var(--text-muted); font-size: 0.9rem; white-space: nowrap; }
-        .institution { color: var(--accent); font-weight: 600; }
+        .date { color: var(--text-muted); font-size: 0.9rem; }
+        .institution { color: var(--accent); font-weight: 600; margin-bottom: 10px; display: block; }
         .details-list { margin-left: 20px; font-size: 0.95rem; color: var(--text-muted); }
         .details-list li { margin-bottom: 5px; }
 
         /* --- AWARDS --- */
-        .award-item {
-            display: flex;
-            margin-bottom: 10px;
-            align-items: flex-start;
-        }
-        .award-year {
-            min-width: 60px;
-            font-weight: bold;
-            color: var(--accent);
-        }
+        .award-item { display: flex; margin-bottom: 10px; }
+        .award-year { min-width: 60px; font-weight: bold; color: var(--accent); }
 
-        /* --- FOOTER --- */
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
+        footer { text-align: center; padding: 40px 0; color: var(--text-muted); font-size: 0.8rem; }
 
-        /* Mobile Tweaks */
         @media (max-width: 600px) {
             .timeline-header { flex-direction: column; }
             h1 { font-size: 2rem; }
@@ -142,56 +181,66 @@
 </head>
 <body>
 
-    <div class="container">
-        <!-- HEADER / PROFILE -->
-        <header id="profile-section">
-            <!-- Content injected by JS -->
-        </header>
+    <!-- Background Animation Layers -->
+    <div class="background-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
 
-        <!-- ABOUT -->
+    <div class="container">
+        <header id="profile-section"></header>
+
         <section id="about">
             <h2>Profile</h2>
-            <p id="bio-text"></p>
+            <div class="card">
+                <p id="bio-text"></p>
+            </div>
         </section>
 
-        <!-- EDUCATION -->
         <section>
             <h2>Education</h2>
             <div id="education-list"></div>
         </section>
 
-        <!-- PUBLICATIONS -->
         <section>
             <h2>Selected Publications</h2>
+            <!-- Filters -->
+            <div class="filter-container" id="pub-filters">
+                <button class="filter-btn active" onclick="filterPapers('all')">All</button>
+                <button class="filter-btn" onclick="filterPapers('astar')">A* Conference</button>
+                <button class="filter-btn" onclick="filterPapers('journal')">Journal</button>
+                <button class="filter-btn" onclick="filterPapers('workshop')">Workshop</button>
+                <button class="filter-btn" onclick="filterPapers('preprint')">Preprint</button>
+                <button class="filter-btn" onclick="filterPapers('others')">Others</button>
+            </div>
             <div id="publications-list"></div>
         </section>
 
-        <!-- EXPERIENCE -->
         <section>
             <h2>Professional Experience</h2>
             <div id="experience-list"></div>
         </section>
         
-        <!-- VOLUNTEERING -->
         <section>
             <h2>Volunteering</h2>
             <div id="volunteering-list"></div>
         </section>
 
-        <!-- AWARDS -->
         <section>
             <h2>Honors & Awards</h2>
-            <div id="awards-list"></div>
+            <div class="card">
+                <div id="awards-list"></div>
+            </div>
         </section>
 
         <footer>
-            <p>&copy; 2025 Ikhlasul Akmal Hanif. Hosted on GitHub/Web.</p>
+            <p>&copy; 2025 Ikhlasul Akmal Hanif.</p>
         </footer>
     </div>
 
     <!-- ================================================================= -->
     <!--                       CONFIGURATION AREA                          -->
-    <!--           EDIT THE CONTENT BELOW TO UPDATE YOUR SITE              -->
     <!-- ================================================================= -->
     <script>
         const config = {
@@ -200,68 +249,73 @@
                 tagline: "Ph.D. Student at MBZUAI | NLP Researcher",
                 email: "ikhlasul.akmal@mbzuai.ac.ae",
                 linkedin: "https://linkedin.com/in/ikhlasul-akmal-h/",
-                bio: "I hold a Bachelor’s degree from the University of Indonesia and am currently pursuing a direct PhD at MBZUAI, supervised by Prof. Fajri Koto and Prof. Iryna Gurevych. Previously, I was mentored by Prof. Shogo Okada and Prof. Monojit Choudhury. I am highly motivated, with awards from undergraduate studies, top results in research shared-task competitions, and experience from internships and full-time work. My research focuses on efficient LLMs, LLM security, multilinguality, and representation learning. I also enjoy teaching and coaching others alongside my research."
+                bio: "I hold a Bachelor’s degree from the University of Indonesia and am currently pursuing a direct PhD at MBZUAI, supervised by Prof. Fajri Koto and Prof. Iryna Gurevych. My research focuses on efficient LLMs, LLM security, multilinguality, and representation learning."
             },
-            education: [
-                {
-                    period: "2025 – 2029",
-                    degree: "Ph.D. in Natural Language Processing",
-                    school: "MBZUAI",
-                    details: ["Supervisors: Prof. Fajri Koto & Prof. Iryna Gurevych"]
-                },
-                {
-                    period: "2021 – 2025",
-                    degree: "Bachelor of Computer Science",
-                    school: "Universitas Indonesia",
-                    details: ["Cum Laude, GPA: 3.80/4.00"]
-                }
-            ],
-            // TO ADD A PAPER: Copy a block enclosed in {} and paste it below
+            // CATEGORY OPTIONS: "astar", "journal", "workshop", "preprint", "others"
             publications: [
                 {
-                    title: "Crowdsource, Crawl, or Generate? Creating SEA-VL, a Multicultural Vision-Language Dataset for Southeast Asia",
-                    authors: "S. Cahyawijaya, H. Lovenia, J.R.A. Moniz... I.A. Hanif, et al.",
+                    title: "Crowdsource, Crawl, or Generate? Creating SEA-VL...",
+                    authors: "S. Cahyawijaya... I.A. Hanif, et al.",
                     venue: "EMNLP 2025",
+                    category: "astar", 
                     link: "#"
                 },
                 {
-                    title: "Evaluating State-of-the-Art Encoders for Multi-Label Emotion Detection (Task 11)",
+                    title: "Evaluating State-of-the-Art Encoders for Multi-Label Emotion Detection",
                     authors: "I.A. Hanif*, E.P. Yulianrifat*, et al.",
                     venue: "SemEval 2025",
+                    category: "workshop", 
                     link: "#"
                 },
                 {
-                    title: "Two Outliers at BEA 2025 Shared Task: Tutor Identity Classification using DiReC",
+                    title: "Tutor Identity Classification using DiReC",
                     authors: "E. Tjitrahardja*, I.A. Hanif*",
                     venue: "BEA @ ACL 2025",
-                    tag: "3rd Place",
+                    category: "workshop",
+                    note: "3rd Place",
                     link: "#"
                 },
                 {
-                    title: "Evaluating the Impact of Data Augmentation and QLoRA-based Fine-Tuning for Maltese to English Speech Translation",
-                    authors: "F.A. Tjiaranata, V.A. Putra... I.A. Hanif",
+                    title: "Evaluating Data Augmentation... Maltese to English Speech Translation",
+                    authors: "F.A. Tjiaranata... I.A. Hanif",
                     venue: "IWSLT 2025",
+                    category: "workshop",
                     link: "#"
                 },
                 {
                     title: "MAG-BERT-ARL for Fair Automated Video Interview Assessment",
                     authors: "B. Putra... I.A. Hanif... S. Okada",
                     venue: "IEEE Access 2025",
+                    category: "journal",
                     link: "#"
                 },
                 {
                     title: "IndoMath: A Benchmark for Mathematical Reasoning in Indonesian",
                     authors: "I.A. Hanif, R. Mahendra",
                     venue: "Under Review, EACL 2025",
-                    tag: "Under Review",
+                    category: "preprint",
                     link: "#"
                 },
                 {
                     title: "UNVEILING: What Makes Linguistics Olympiad Puzzles Tricky for LLMs?",
                     authors: "M. Choudhary... I.A. Hanif... M. Choudhury",
                     venue: "COLM 2025",
-                    tag: "Accepted",
+                    category: "astar", /* Assuming COLM is high tier/conference */
                     link: "#"
+                }
+            ],
+            education: [
+                {
+                    period: "2025 – 2029",
+                    degree: "Ph.D. in NLP",
+                    school: "MBZUAI",
+                    details: ["Advisors: Prof. Fajri Koto & Prof. Iryna Gurevych"]
+                },
+                {
+                    period: "2021 – 2025",
+                    degree: "B. Comp. Sci.",
+                    school: "Universitas Indonesia",
+                    details: ["Cum Laude, GPA: 3.80/4.00"]
                 }
             ],
             experience: [
@@ -269,93 +323,54 @@
                     role: "AI Coach",
                     company: "Kokocoder Group",
                     date: "Feb 2025 – Jul 2025",
-                    tasks: [
-                        "Taught high school students AI, guiding them through ML, CV, and NLP.",
-                        "Created challenging curriculum and problem sets."
-                    ]
+                    tasks: ["Taught high school students AI, ML, and CV."]
                 },
                 {
                     role: "AI Engineer",
                     company: "PT. Fungsitama Cipta Teknologi",
                     date: "Feb 2025 – Jul 2025",
-                    tasks: [
-                        "Developed RAG chatbot and intelligent API navigation system.",
-                        "Designed scalable VLM-based OCR pipeline for structured data extraction."
-                    ]
+                    tasks: ["Developed RAG chatbot and scalable VLM-based OCR."]
                 },
                 {
                     role: "AI Engineer Intern",
                     company: "Media Kernels Indonesia",
                     date: "Sep 2024 – Nov 2024",
-                    tasks: [
-                        "Developed end-to-end RAG chatbot for social media/news data.",
-                        "Experimented with embedding optimization, agentic AI, and chunking."
-                    ]
+                    tasks: ["Developed RAG chatbot for social media news data."]
                 },
                 {
                     role: "Research Intern",
                     company: "MBZUAI",
                     date: "May 2024 – Jun 2024",
-                    tasks: [
-                        "Researched Auto Regressive LMs on Linguistic Puzzle Problems.",
-                        "Resulted in the paper 'UNVEILING' accepted at COLM 2025."
-                    ]
-                },
-                {
-                    role: "Research Intern",
-                    company: "JAIST",
-                    date: "Jan 2024 – Mar 2024",
-                    tasks: [
-                        "Investigated bias mitigation in interviews using multimodal datasets.",
-                        "Resulted in paper published in IEEE Access."
-                    ]
-                },
-                {
-                    role: "Teaching Assistant",
-                    company: "Faculty of Computer Science, UI",
-                    date: "Jul 2022 – Dec 2023",
-                    tasks: [
-                        "Assisted in Discrete Mathematics, Statistics, and AI Fundamentals."
-                    ]
+                    tasks: ["Researched Auto Regressive LMs on Linguistic Puzzles."]
                 }
             ],
             volunteering: [
                 {
-                    role: "Mentor, Data Science Academy",
-                    company: "Compfest",
-                    date: "Jul – Aug 2025",
-                    tasks: ["Mentored selected teams in DS/AI competitions."]
+                    role: "Mentor",
+                    company: "Compfest Data Science Academy",
+                    date: "2025",
+                    tasks: ["Mentored teams in DS/AI competitions."]
                 },
                 {
-                    role: "Speaker",
-                    company: "BNCC & RISTEK Datathon",
-                    date: "Jul 2025",
-                    tasks: ["Delivered talks to 600+ students on competition strategies."]
-                },
-                {
-                    role: "Lead, Data Science & Analytics SIG",
+                    role: "Lead, Data Science SIG",
                     company: "RISTEK Fasilkom UI",
-                    date: "Mar 2024 – Feb 2025",
-                    tasks: ["Led award-winning SIG, mentoring members in ML/NLP/CV."]
+                    date: "2024 – 2025",
+                    tasks: ["Led award-winning SIG."]
                 }
             ],
             awards: [
-                "2025 | Grant: OpenAI Microgrant (MBZUAI) — USD 1,000",
-                "2025 | International: 3rd Place BEA Shared Task @ ACL on Tutor Detection",
-                "2024 | National: 1st Winner Data Mining GemastikXVI",
-                "2024 | National: 2nd Winner Satria Data Big Data Challenge",
-                "2024 | National: Scholarship, Sakura Science Program, JST",
-                "2024 | National: 1st Winner ML Competition, Telkom Institute",
-                "2023 | National: 1st Winner Data Competition, Airlangga University",
-                "2018 | National: 1st Winner Programming Competitions, UPH"
+                "2025 | Grant: OpenAI Microgrant (MBZUAI)",
+                "2025 | 3rd Place BEA Shared Task @ ACL",
+                "2024 | 1st Winner Data Mining GemastikXVI",
+                "2024 | Scholarship, Sakura Science Program"
             ]
         };
 
-        // --- LOGIC TO RENDER THE PAGE (DO NOT EDIT BELOW UNLESS YOU KNOW JS) ---
+        // --- RENDER LOGIC ---
 
         function render() {
-            // Render Profile
-            const headerHTML = `
+            // Profile
+            document.getElementById('profile-section').innerHTML = `
                 <h1>${config.profile.name}</h1>
                 <div class="subtitle">${config.profile.tagline}</div>
                 <div class="contact-links">
@@ -363,76 +378,45 @@
                     <a href="${config.profile.linkedin}" target="_blank">LinkedIn</a>
                 </div>
             `;
-            document.getElementById('profile-section').innerHTML = headerHTML;
             document.getElementById('bio-text').innerText = config.profile.bio;
 
-            // Render Education
+            // Education
             const eduContainer = document.getElementById('education-list');
             config.education.forEach(edu => {
                 eduContainer.innerHTML += `
-                    <div class="card timeline-item">
+                    <div class="card tilt-card">
                         <div class="timeline-header">
                             <div class="role">${edu.degree}</div>
                             <div class="date">${edu.period}</div>
                         </div>
                         <div class="institution">${edu.school}</div>
-                        <ul class="details-list">
-                            ${edu.details.map(d => `<li>${d}</li>`).join('')}
-                        </ul>
+                        <ul class="details-list">${edu.details.map(d => `<li>${d}</li>`).join('')}</ul>
                     </div>
                 `;
             });
 
-            // Render Publications
+            // Publications
             const pubContainer = document.getElementById('publications-list');
             config.publications.forEach(pub => {
+                let catLabel = pub.category === 'astar' ? 'A* Conf' : pub.category;
                 pubContainer.innerHTML += `
-                    <div class="card paper-card">
+                    <div class="card paper-card tilt-card" data-category="${pub.category}">
+                        <div><span class="category-tag">${catLabel}</span></div>
                         <h3><a href="${pub.link}">${pub.title}</a></h3>
                         <div class="paper-authors">${pub.authors}</div>
                         <div>
                             <span class="paper-venue">${pub.venue}</span>
-                            ${pub.tag ? `<span class="tag">${pub.tag}</span>` : ''}
+                            ${pub.note ? ` &bull; <b>${pub.note}</b>` : ''}
                         </div>
                     </div>
                 `;
             });
 
-            // Render Experience
-            const expContainer = document.getElementById('experience-list');
-            config.experience.forEach(exp => {
-                expContainer.innerHTML += `
-                    <div class="card timeline-item">
-                        <div class="timeline-header">
-                            <div class="role">${exp.role}</div>
-                            <div class="date">${exp.date}</div>
-                        </div>
-                        <div class="institution">${exp.company}</div>
-                        <ul class="details-list">
-                            ${exp.tasks.map(t => `<li>${t}</li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-            });
-            
-            // Render Volunteering
-            const volContainer = document.getElementById('volunteering-list');
-            config.volunteering.forEach(vol => {
-                volContainer.innerHTML += `
-                    <div class="card timeline-item">
-                        <div class="timeline-header">
-                            <div class="role">${vol.role}</div>
-                            <div class="date">${vol.date}</div>
-                        </div>
-                        <div class="institution">${vol.company}</div>
-                        <ul class="details-list">
-                            ${vol.tasks.map(t => `<li>${t}</li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-            });
+            // Experience
+            renderTimeline('experience-list', config.experience);
+            renderTimeline('volunteering-list', config.volunteering);
 
-            // Render Awards
+            // Awards
             const awardContainer = document.getElementById('awards-list');
             config.awards.forEach(award => {
                 const [year, desc] = award.split('|');
@@ -443,28 +427,73 @@
                     </div>
                 `;
             });
+
+            init3D();
         }
 
-        // --- ANIMATION LOGIC ---
-        function setupAnimations() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            document.querySelectorAll('section').forEach(section => {
-                observer.observe(section);
+        function renderTimeline(id, data) {
+            const container = document.getElementById(id);
+            data.forEach(item => {
+                container.innerHTML += `
+                    <div class="card tilt-card">
+                        <div class="timeline-header">
+                            <div class="role">${item.role}</div>
+                            <div class="date">${item.date}</div>
+                        </div>
+                        <div class="institution">${item.company}</div>
+                        <ul class="details-list">${item.tasks.map(t => `<li>${t}</li>`).join('')}</ul>
+                    </div>
+                `;
             });
         }
 
-        // Run
-        document.addEventListener('DOMContentLoaded', () => {
-            render();
-            setupAnimations();
-        });
+        // --- FILTERING LOGIC ---
+        function filterPapers(category) {
+            // Update Buttons
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter Cards
+            const cards = document.querySelectorAll('.paper-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // --- 3D TILT LOGIC ---
+        function init3D() {
+            const cards = document.querySelectorAll('.tilt-card');
+
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Calculate Rotation
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = ((y - centerY) / centerY) * -5; // Max 5deg rotation
+                    const rotateY = ((x - centerX) / centerX) * 5;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                    card.classList.add('card-hover');
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+                    card.classList.remove('card-hover');
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', render);
     </script>
 </body>
 </html>

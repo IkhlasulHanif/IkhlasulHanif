@@ -3,7 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ikhlasul Akmal Hanif - Portfolio</title>
+    
+    <title>Ikhlasul Akmal Hanif – NLP Researcher & Ph.D. Student</title>
+
+    <!-- SEO BASICS -->
+    <meta name="description" content="Portfolio of Ikhlasul Akmal Hanif, Ph.D. student at MBZUAI and NLP researcher focusing on efficient LLMs, LLM security, multilinguality, and representation learning.">
+    <meta name="keywords" content="Ikhlasul Akmal Hanif, NLP, MBZUAI, PhD student, large language models, LLM security, multilingual NLP, representation learning, AI research, publications">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ikhlasulhanif.github.io/">
+
+    <!-- OPEN GRAPH (for social / link previews) -->
+    <meta property="og:title" content="Ikhlasul Akmal Hanif – NLP Researcher & Ph.D. Student">
+    <meta property="og:description" content="Ph.D. student at MBZUAI focused on efficient LLMs, LLM security, multilinguality, and representation learning. Explore my publications, experience, and awards.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ikhlasulhanif.github.io/">
+    <!-- Optional: if you add a preview image later, uncomment below and update the URL -->
+    <!-- <meta property="og:image" content="https://ikhlasulhanif.github.io/preview.png"> -->
+
+    <!-- TWITTER CARD -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ikhlasul Akmal Hanif – NLP Researcher & Ph.D. Student">
+    <meta name="twitter:description" content="Portfolio of Ikhlasul Akmal Hanif, Ph.D. student at MBZUAI and NLP researcher.">
+    <!-- <meta name="twitter:image" content="https://ikhlasulhanif.github.io/preview.png"> -->
+
+    <!-- STRUCTURED DATA (optional but good for search engines) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Ikhlasul Akmal Hanif",
+      "url": "https://ikhlasulhanif.github.io/",
+      "jobTitle": "Ph.D. Student in NLP",
+      "affiliation": {
+        "@type": "CollegeOrUniversity",
+        "name": "MBZUAI"
+      },
+      "sameAs": [
+        "https://linkedin.com/in/ikhlasul-akmal-h/"
+      ]
+    }
+    </script>
+
     <style>
         /* --- CSS VARIABLES & RESET --- */
         :root {
@@ -191,7 +231,7 @@
 </head>
 <body>
 
-    <div class="background-shapes">
+    <div class="background-shapes" aria-hidden="true">
         <div class="shape"></div>
         <div class="shape"></div>
         <div class="shape"></div>
@@ -200,46 +240,48 @@
     <div class="container">
         <header id="profile-section"></header>
 
-        <section id="about">
-            <h2>Profile</h2>
-            <div class="card">
-                <p id="bio-text"></p>
-            </div>
-        </section>
+        <main>
+            <section id="about">
+                <h2>Profile</h2>
+                <div class="card">
+                    <p id="bio-text"></p>
+                </div>
+            </section>
 
-        <section>
-            <h2>Education</h2>
-            <div id="education-list"></div>
-        </section>
+            <section>
+                <h2>Education</h2>
+                <div id="education-list"></div>
+            </section>
 
-        <section>
-            <h2>Selected Publications</h2>
-            <div class="filter-container" id="pub-filters">
-                <button class="filter-btn active" onclick="toggleFilter(this)" data-val="astar">A* Conference</button>
-                <button class="filter-btn active" onclick="toggleFilter(this)" data-val="journal">Journal</button>
-                <button class="filter-btn active" onclick="toggleFilter(this)" data-val="workshop">Workshop</button>
-                <button class="filter-btn active" onclick="toggleFilter(this)" data-val="preprint">Preprint</button>
-                <button class="filter-btn active" onclick="toggleFilter(this)" data-val="others">Others</button>
-            </div>
-            <div id="publications-list"></div>
-        </section>
+            <section>
+                <h2>Selected Publications</h2>
+                <div class="filter-container" id="pub-filters" aria-label="Filter publications by type">
+                    <button class="filter-btn active" onclick="toggleFilter(this)" data-val="astar">A* Conference</button>
+                    <button class="filter-btn active" onclick="toggleFilter(this)" data-val="journal">Journal</button>
+                    <button class="filter-btn active" onclick="toggleFilter(this)" data-val="workshop">Workshop</button>
+                    <button class="filter-btn active" onclick="toggleFilter(this)" data-val="preprint">Preprint</button>
+                    <button class="filter-btn active" onclick="toggleFilter(this)" data-val="others">Others</button>
+                </div>
+                <div id="publications-list"></div>
+            </section>
 
-        <section>
-            <h2>Professional Experience</h2>
-            <div id="experience-list"></div>
-        </section>
-        
-        <section>
-            <h2>Volunteering</h2>
-            <div id="volunteering-list"></div>
-        </section>
+            <section>
+                <h2>Professional Experience</h2>
+                <div id="experience-list"></div>
+            </section>
+            
+            <section>
+                <h2>Volunteering</h2>
+                <div id="volunteering-list"></div>
+            </section>
 
-        <section>
-            <h2>Honors & Awards</h2>
-            <div class="card">
-                <div id="awards-list"></div>
-            </div>
-        </section>
+            <section>
+                <h2>Honors &amp; Awards</h2>
+                <div class="card">
+                    <div id="awards-list"></div>
+                </div>
+            </section>
+        </main>
 
         <footer>
             <p>&copy; 2025 Ikhlasul Akmal Hanif.</p>
@@ -379,7 +421,7 @@
                 <div class="subtitle">${config.profile.tagline}</div>
                 <div class="contact-links">
                     <a href="mailto:${config.profile.email}">Email</a> | 
-                    <a href="${config.profile.linkedin}" target="_blank">LinkedIn</a>
+                    <a href="${config.profile.linkedin}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
                 </div>
             `;
             document.getElementById('bio-text').innerText = config.profile.bio;
@@ -406,7 +448,7 @@
                 pubContainer.innerHTML += `
                     <div class="card paper-card tilt-card" data-category="${pub.category}">
                         <div><span class="category-tag">${catLabel}</span></div>
-                        <h3><a href="${pub.link}">${pub.title}</a></h3>
+                        <h3><a href="${pub.link}" target="_blank" rel="noopener noreferrer">${pub.title}</a></h3>
                         <div class="paper-authors">${pub.authors}</div>
                         <div>
                             <span class="paper-venue">${pub.venue}</span>

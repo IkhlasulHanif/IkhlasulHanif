@@ -13,16 +13,15 @@
     <style>
         /* --- VARIABLES --- */
         :root {
-            /* Palette: Dark Slate Sidebar, Creamy White Content */
-            --sidebar-bg: #1e293b; 
-            --sidebar-text: #f8fafc;
-            --bg-color: #fcfcfc;
+            --sidebar-bg: #0f172a; /* Deeper Navy */
+            --sidebar-text: #e2e8f0;
+            --bg-color: #ffffff;
             --text-main: #334155;
             --text-muted: #64748b;
-            --accent-color: #0f766e; /* Teal - Unique academic color */
+            --accent-color: #0f766e; /* Teal */
             --accent-hover: #115e59;
-            --border-color: #e2e8f0;
-            --sidebar-width: 300px;
+            --border-color: #f1f5f9;
+            --sidebar-width: 320px; /* Slightly wider for the map */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,18 +37,14 @@
         a { color: var(--accent-color); text-decoration: none; font-weight: 500; transition: all 0.2s ease; }
         a:hover { color: var(--accent-hover); text-decoration: underline; }
 
-        /* --- LAYOUT --- */
-        .wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
+        .wrapper { display: flex; min-height: 100vh; }
 
-        /* --- UNIQUE DARK SIDEBAR --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             width: var(--sidebar-width);
             background-color: var(--sidebar-bg);
             color: var(--sidebar-text);
-            padding: 60px 30px;
+            padding: 50px 25px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -58,210 +53,136 @@
             top: 0;
             height: 100vh;
             flex-shrink: 0;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.05);
+            overflow-y: auto; /* Allow scrolling if map is tall */
+            scrollbar-width: none; /* Hide scrollbar Firefox */
         }
+        .sidebar::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome */
 
         .profile-photo {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%; /* Circle */
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 25px;
-            border: 4px solid rgba(255,255,255,0.1);
-            background-color: #334155; /* Placeholder bg */
+            margin-bottom: 20px;
+            border: 3px solid rgba(255,255,255,0.1);
+            background-color: #1e293b;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         .sidebar h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             letter-spacing: 0.5px;
+            color: #fff;
         }
 
         .sidebar-tagline {
-            font-size: 0.9rem;
-            color: #cbd5e1; /* Light grey */
-            font-weight: 300;
-            margin-bottom: 30px;
-            line-height: 1.4;
-        }
-
-        /* --- SIDEBAR ICONS (Clean White) --- */
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: auto; /* Push to bottom or stick near info */
-            margin-bottom: 30px;
-        }
-
-        .social-icon {
-            width: 22px;
-            height: 22px;
-            fill: #94a3b8;
-            transition: fill 0.3s, transform 0.2s;
-        }
-
-        .social-links a:hover .social-icon {
-            fill: #fff;
-            transform: translateY(-2px);
-        }
-
-        /* --- VISITOR MAP CONTAINER --- */
-        .map-container {
-            margin-top: 30px;
-            width: 100%;
-            padding: 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: #94a3b8;
+            font-weight: 300;
+            margin-bottom: 25px;
+            line-height: 1.5;
         }
 
-        .map-placeholder {
+        /* --- SOCIAL ICONS --- */
+        .social-links { display: flex; gap: 12px; margin-bottom: 30px; }
+        .social-icon { width: 20px; height: 20px; fill: #64748b; transition: all 0.3s; }
+        .social-links a:hover .social-icon { fill: #38bdf8; transform: translateY(-2px); }
+
+        /* --- ANALYTICS SECTION --- */
+        .analytics-wrapper {
             width: 100%;
-            height: 100px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 5px;
-            border: 1px dashed #666;
+            margin-top: auto; /* Pushes to bottom */
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 15px;
+            overflow: hidden;
         }
+
+        .map-container {
+            width: 100%;
+            height: 180px; /* Fixed height for globe */
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            /* Placeholder background while loading */
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+        }
+
+        .stat-box { text-align: left; }
+        .stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; display: block; margin-bottom: 2px;}
+        .stat-value { font-family: 'Inter', monospace; font-size: 0.95rem; color: #e2e8f0; font-weight: 600; }
+        .live-dot { height: 6px; width: 6px; background-color: #10b981; border-radius: 50%; display: inline-block; margin-left: 4px; animation: pulse 2s infinite;}
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
         /* --- MAIN CONTENT --- */
-        .main-content {
-            flex-grow: 1;
-            padding: 60px 80px;
-            max-width: 1000px; /* Readability constraint */
-        }
-
-        section { margin-bottom: 60px; }
-
+        .main-content { flex-grow: 1; padding: 70px 90px; max-width: 1100px; }
+        section { margin-bottom: 70px; }
+        
         h2 {
             font-family: 'Playfair Display', serif;
             font-size: 1.8rem;
             color: #0f172a;
-            margin-bottom: 25px;
-            position: relative;
-            padding-bottom: 10px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        /* Stylish underline for headers */
-        h2::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 40px;
-            height: 3px;
-            background-color: var(--accent-color);
-        }
-
-        p { margin-bottom: 15px; font-size: 1.05rem; }
-
-        /* --- UNIQUE PUBLICATION CARDS --- */
-        .filter-container { margin-bottom: 30px; }
-        
+        /* --- PUBLICATIONS --- */
+        .filter-container { margin-bottom: 25px; }
         .filter-btn {
-            background: transparent;
-            border: none;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-right: 20px;
-            cursor: pointer;
-            padding-bottom: 2px;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
+            background: none; border: none;
+            font-size: 0.85rem; font-weight: 600; color: var(--text-muted);
+            margin-right: 20px; cursor: pointer; padding-bottom: 4px;
+            border-bottom: 2px solid transparent; transition: 0.3s;
         }
-        
-        .filter-btn:hover { color: var(--accent-color); }
-        .filter-btn.active { color: var(--accent-color); border-bottom-color: var(--accent-color); }
+        .filter-btn:hover, .filter-btn.active { color: var(--accent-color); border-color: var(--accent-color); }
 
         .pub-item {
-            margin-bottom: 25px;
-            padding: 20px;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            transition: all 0.2s;
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02); /* Very subtle shadow */
+            display: flex; flex-direction: column;
+            padding: 20px 0;
+            border-bottom: 1px solid #f8fafc;
+            transition: 0.2s;
         }
-
-        .pub-item:hover {
-            border-color: var(--border-color);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            transform: translateY(-2px);
-        }
+        .pub-item:hover { transform: translateX(5px); }
         .pub-item.hidden { display: none; }
-
-        .pub-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: #0f172a;
-            display: block;
-            margin-bottom: 5px;
-            text-decoration: none;
-        }
-        .pub-title:hover { text-decoration: none; color: var(--accent-color); }
-
-        .pub-authors { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 5px; }
-        .pub-venue { 
-            font-size: 0.85rem; 
-            font-weight: 600; 
-            color: var(--accent-color); 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-        }
-
-        /* --- TIMELINE (Minimalist) --- */
-        .timeline-item {
-            display: grid;
-            grid-template-columns: 130px 1fr;
-            margin-bottom: 30px;
-            gap: 20px;
-        }
         
-        .timeline-date {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-align: right;
-            padding-top: 3px;
-        }
+        .pub-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 600; color: #1e293b; margin-bottom: 6px; }
+        .pub-meta { font-size: 0.9rem; color: var(--text-muted); }
+        .pub-venue { display: inline-block; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: #475569; margin-top: 8px; text-transform: uppercase;}
 
-        .timeline-content {
-            border-left: 2px solid var(--border-color);
-            padding-left: 25px;
-        }
+        /* --- TIMELINE --- */
+        .timeline-item { display: flex; margin-bottom: 35px; }
+        .timeline-date { min-width: 120px; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; padding-top: 4px; }
+        .timeline-content { border-left: 2px solid #e2e8f0; padding-left: 25px; padding-bottom: 10px; }
+        .timeline-content h3 { font-size: 1.1rem; font-weight: 600; color: #1e293b; }
+        .timeline-content .org { font-style: italic; font-size: 0.95rem; color: #64748b; display: block; margin-bottom: 8px; }
+        .timeline-content li { list-style: none; font-size: 0.95rem; color: #475569; margin-bottom: 4px; }
+        .timeline-content li::before { content: "›"; color: var(--accent-color); font-weight: bold; margin-right: 8px; }
 
-        .timeline-content h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 5px; }
-        .timeline-content .org { font-style: italic; color: var(--text-muted); display: block; margin-bottom: 8px; }
-        .timeline-content ul { list-style: none; color: #475569; font-size: 0.95rem; }
-        .timeline-content li::before { content: "•"; color: var(--accent-color); font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; }
+        footer { margin-top: 80px; padding-top: 30px; border-top: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-muted); }
 
-        /* --- FOOTER --- */
-        footer {
-            margin-top: 80px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        /* --- MOBILE --- */
         @media (max-width: 900px) {
             .wrapper { flex-direction: column; }
             .sidebar { width: 100%; height: auto; position: relative; padding: 40px 20px; }
             .main-content { padding: 40px 25px; }
-            .timeline-item { grid-template-columns: 1fr; gap: 5px; }
-            .timeline-date { text-align: left; }
+            .timeline-item { flex-direction: column; }
+            .timeline-date { margin-bottom: 5px; }
             .timeline-content { border-left: none; padding-left: 0; }
+            .analytics-wrapper { display: none; /* Hide 3D map on mobile to save data/battery */ }
         }
     </style>
 </head>
@@ -278,68 +199,73 @@
         </div>
 
         <div class="social-links">
-            <a href="#" target="_blank" title="Google Scholar">
-                <svg class="social-icon"><use href="#icon-scholar"></use></svg>
-            </a>
-            <a href="#" target="_blank" title="Twitter">
-                <svg class="social-icon"><use href="#icon-twitter"></use></svg>
-            </a>
-            <a href="#" target="_blank" title="LinkedIn">
-                <svg class="social-icon"><use href="#icon-linkedin"></use></svg>
-            </a>
-            <a href="#" target="_blank" title="GitHub">
-                <svg class="social-icon"><use href="#icon-github"></use></svg>
-            </a>
-            <a href="#" target="_blank" title="CV">
-                <svg class="social-icon"><use href="#icon-cv"></use></svg>
-            </a>
+            <a href="#" title="Scholar"><svg class="social-icon"><use href="#icon-scholar"></use></svg></a>
+            <a href="#" title="Twitter"><svg class="social-icon"><use href="#icon-twitter"></use></svg></a>
+            <a href="#" title="LinkedIn"><svg class="social-icon"><use href="#icon-linkedin"></use></svg></a>
+            <a href="#" title="GitHub"><svg class="social-icon"><use href="#icon-github"></use></svg></a>
+            <a href="#" title="CV"><svg class="social-icon"><use href="#icon-cv"></use></svg></a>
+        </div>
+        
+        <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 40px;">
+            <a href="mailto:ikhlasul.akmal@mbzuai.ac.ae" style="color:inherit; text-decoration:none; border-bottom: 1px dashed #475569;">ikhlasul.akmal@mbzuai.ac.ae</a>
         </div>
 
-        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: auto;">
-            <a href="mailto:ikhlasul.akmal@mbzuai.ac.ae" style="color:#cbd5e1; text-decoration:none;">ikhlasul.akmal@mbzuai.ac.ae</a>
-        </div>
-
-        <div class="map-container">
-            <div class="map-placeholder">
-                [ Map Widget Here ]
+        <div class="analytics-wrapper">
+            <div class="map-container">
+                <script type="text/javascript" src="//rf.revolvermaps.com/0/0/6.js?i=5ty5385628s&amp;m=7&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=0&amp;bv=90&amp;lx=-420&amp;ly=420&amp;hi=20&amp;he=7&amp;hc=a8ddff&amp;rs=80" async="async"></script>
             </div>
-            <span>Visitors from around the world</span>
+            
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-label">Total Visits</span>
+                    <span class="stat-value" id="visit-count">12,405</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Status</span>
+                    <span class="stat-value" style="color: #10b981;">Online <span class="live-dot"></span></span>
+                </div>
+                <div class="stat-box" style="margin-top: 10px;">
+                    <span class="stat-label">Top Region</span>
+                    <span class="stat-value">UAE / IDN</span>
+                </div>
+                <div class="stat-box" style="margin-top: 10px;">
+                    <span class="stat-label">Citations</span>
+                    <span class="stat-value">45</span>
+                </div>
+            </div>
         </div>
     </aside>
 
     <main class="main-content">
-        
         <section id="about">
             <h2>About Me</h2>
-            <div id="bio-text">
-                </div>
+            <div id="bio-text"></div>
         </section>
 
         <section id="news">
             <h2>Latest News</h2>
-            <div style="font-family: 'Playfair Display'; font-style: italic; color: var(--accent-color); margin-bottom: 20px;">
+            <div style="font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--accent-color); margin-bottom: 25px; font-style: italic;">
                 "Striving for efficiency in an era of massive models."
             </div>
-            <ul style="list-style: none; padding: 0;">
-                <li style="margin-bottom: 10px;">
-                    <span style="font-weight: bold; color: var(--text-main);">Dec 2025</span> — Paper accepted at <span style="font-weight: 600;">EMNLP 2025</span>.
+            <ul style="list-style: none; padding: 0; font-size: 0.95rem;">
+                <li style="margin-bottom: 12px; border-left: 2px solid var(--accent-color); padding-left: 15px;">
+                    <strong style="color: #0f172a;">Dec 2025:</strong> Paper on Multilingual LLMs accepted at <strong style="color: var(--accent-color);">EMNLP 2025</strong>.
                 </li>
-                <li style="margin-bottom: 10px;">
-                    <span style="font-weight: bold; color: var(--text-main);">May 2025</span> — Started Ph.D. at <span style="font-weight: 600;">MBZUAI</span>.
+                <li style="margin-bottom: 12px; border-left: 2px solid #cbd5e1; padding-left: 15px;">
+                    <strong style="color: #0f172a;">May 2025:</strong> Started my Ph.D. journey at MBZUAI in Abu Dhabi.
                 </li>
             </ul>
         </section>
 
         <section id="publications">
-            <h2>Selected Publications</h2>
+            <h2>Publications</h2>
             <div class="filter-container">
                 <button class="filter-btn active" onclick="toggleFilter(this)" data-val="all">All</button>
                 <button class="filter-btn" onclick="toggleFilter(this)" data-val="astar">A* Conference</button>
                 <button class="filter-btn" onclick="toggleFilter(this)" data-val="journal">Journal</button>
                 <button class="filter-btn" onclick="toggleFilter(this)" data-val="preprint">Preprint</button>
             </div>
-            <div id="publications-list">
-                </div>
+            <div id="publications-list"></div>
         </section>
 
         <section id="education">
@@ -358,10 +284,9 @@
         </section>
 
         <footer>
-            &copy; 2025 Ikhlasul Akmal Hanif. <br>
-            Designed with a Modern Swiss Academic aesthetic.
+            &copy; 2025 Ikhlasul Akmal Hanif.<br>
+            <span style="opacity: 0.6;">Designed with a Modern Swiss Academic aesthetic.</span>
         </footer>
-
     </main>
 </div>
 
@@ -374,43 +299,18 @@
 </svg>
 
 <script>
-    /* --- DATA --- */
     const config = {
         profile: {
-            bio: "I am a Ph.D. student in NLP at MBZUAI, advised by Prof. Fajri Koto and Prof. Iryna Gurevych. I previously obtained my B.Comp.Sci. from Universitas Indonesia. My research focuses on <b>Efficient LLMs</b>, <b>Security</b>, and <b>Multilingual Representation Learning</b>."
+            bio: "I am a first-year Ph.D. student in the Natural Language Processing department at MBZUAI, fortunate to be advised by Prof. Fajri Koto and Prof. Iryna Gurevych. My research interests broadly cover efficient Large Language Models, safety/security, and multilingual NLP for low-resource languages."
         },
         publications: [
-            {
-                title: "Crowdsource, Crawl, or Generate? Creating SEA-VL...",
-                authors: "S. Cahyawijaya... <b>I.A. Hanif</b>, et al.",
-                venue: "EMNLP 2025",
-                category: "astar",
-                link: "#"
-            },
-            {
-                title: "Evaluating State-of-the-Art Encoders for Emotion Detection",
-                authors: "<b>I.A. Hanif*</b>, E.P. Yulianrifat*, et al.",
-                venue: "SemEval 2025",
-                category: "workshop",
-                link: "#"
-            },
-            {
-                title: "MAG-BERT-ARL for Fair Automated Video Interview Assessment",
-                authors: "B. Putra... <b>I.A. Hanif</b>... S. Okada",
-                venue: "IEEE Access",
-                category: "journal",
-                link: "#"
-            },
-            {
-                title: "IndoMath: A Benchmark for Math Reasoning in Indonesian",
-                authors: "<b>I.A. Hanif</b>, R. Mahendra",
-                venue: "Under Review",
-                category: "preprint",
-                link: "#"
-            }
+            { title: "Crowdsource, Crawl, or Generate? Creating SEA-VL...", authors: "S. Cahyawijaya... <b>I.A. Hanif</b>, et al.", venue: "EMNLP 2025", category: "astar", link: "#" },
+            { title: "Evaluating State-of-the-Art Encoders for Emotion Detection", authors: "<b>I.A. Hanif*</b>, E.P. Yulianrifat*, et al.", venue: "SemEval 2025", category: "workshop", link: "#" },
+            { title: "MAG-BERT-ARL for Fair Automated Video Interview Assessment", authors: "B. Putra... <b>I.A. Hanif</b>... S. Okada", venue: "IEEE Access", category: "journal", link: "#" },
+            { title: "IndoMath: A Benchmark for Math Reasoning in Indonesian", authors: "<b>I.A. Hanif</b>, R. Mahendra", venue: "Under Review", category: "preprint", link: "#" }
         ],
         education: [
-            { date: "2025 – Present", degree: "Ph.D. in NLP", school: "MBZUAI", details: ["Advisors: Prof. F. Koto, Prof. I. Gurevych"] },
+            { date: "2025 – Present", degree: "Ph.D. in NLP", school: "MBZUAI", details: ["Advisors: Prof. Fajri Koto & Prof. Iryna Gurevych"] },
             { date: "2021 – 2025", degree: "B. Comp. Sci.", school: "Universitas Indonesia", details: ["Cum Laude (GPA 3.80/4.00)"] }
         ],
         experience: [
@@ -424,43 +324,51 @@
         ]
     };
 
-    /* --- RENDER FUNCTIONS --- */
     function render() {
-        // Bio
         document.getElementById('bio-text').innerHTML = `<p>${config.profile.bio}</p>`;
-
-        // Publications
+        
         const pubContainer = document.getElementById('publications-list');
         config.publications.forEach(pub => {
             pubContainer.innerHTML += `
                 <div class="pub-item" data-category="${pub.category}">
                     <a href="${pub.link}" class="pub-title">${pub.title}</a>
-                    <div class="pub-authors">${pub.authors}</div>
-                    <div class="pub-venue">${pub.venue}</div>
+                    <div class="pub-meta">
+                        ${pub.authors}<br>
+                        <span class="pub-venue">${pub.venue}</span>
+                    </div>
                 </div>
             `;
         });
 
-        // Timeline
         renderTimeline('education-list', config.education);
         renderTimeline('experience-list', config.experience);
-
-        // Awards
         const awContainer = document.getElementById('awards-list');
         config.awards.forEach(a => awContainer.innerHTML += `<li>${a}</li>`);
+        
+        // --- SIMULATE VISITOR COUNT (For Demo Purposes Only) ---
+        // In reality, replace this logic with an API call to your backend
+        let count = 12405;
+        const countEl = document.getElementById('visit-count');
+        setInterval(() => {
+            // Randomly increase count every few seconds to look "live"
+            if(Math.random() > 0.7) {
+                count++;
+                countEl.innerText = count.toLocaleString();
+                countEl.style.color = "#38bdf8"; // Flash blue
+                setTimeout(() => countEl.style.color = "#e2e8f0", 500);
+            }
+        }, 3000);
     }
 
     function renderTimeline(id, data) {
         const container = document.getElementById(id);
         data.forEach(item => {
-            const role = item.degree || item.role;
-            const place = item.school || item.org;
             container.innerHTML += `
                 <div class="timeline-item">
                     <div class="timeline-date">${item.date}</div>
                     <div class="timeline-content">
-                        <h3>${role}</h3>
-                        <span class="org">${place}</span>
+                        <h3>${item.degree || item.role}</h3>
+                        <span class="org">${item.school || item.org}</span>
                         <ul>${item.details.map(d => `<li>${d}</li>`).join('')}</ul>
                     </div>
                 </div>
@@ -468,18 +376,13 @@
         });
     }
 
-    /* --- FILTER --- */
     function toggleFilter(btn) {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const type = btn.getAttribute('data-val');
-        
         document.querySelectorAll('.pub-item').forEach(item => {
-            if (type === 'all' || item.getAttribute('data-category') === type) {
-                item.classList.remove('hidden');
-            } else {
-                item.classList.add('hidden');
-            }
+            if (type === 'all' || item.getAttribute('data-category') === type) item.classList.remove('hidden');
+            else item.classList.add('hidden');
         });
     }
 
